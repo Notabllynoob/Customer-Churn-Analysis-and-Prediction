@@ -1,0 +1,12 @@
+# Git Ignore
+node_modules/
+__pycache__/
+*.joblib
+*.csv
+.env
+.idea/
+build/
+dist/
+.DS_Store
+frontend/build/
+frontend/node_modules/
