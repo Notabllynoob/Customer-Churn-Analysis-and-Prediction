@@ -4,21 +4,27 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import json
+import os
+from dotenv import load_dotenv
 
-# Try to load the dataset for analytical endpoints
+load_dotenv()
+
+# Load dataset path from env var or default to local file
+DATA_FILE = os.getenv('CHURN_DATA_PATH', 'WA_Fn-UseC_-Telco-Customer-Churn.csv')
+
 try:
-    full_df = pd.read_csv('WA_Fn-UseC_-Telco-Customer-Churn.csv')
+    full_df = pd.read_csv(DATA_FILE)
 except FileNotFoundError:
-    print("Warning: 'WA_Fn-UseC_-Telco-Customer-Churn.csv' not found. Analytical endpoints will not work.")
+    print(f"Warning: '{DATA_FILE}' not found. Analytical endpoints will not work.")
     full_df = None
 
 #Create the FastAPI app instance FIRST
 app = FastAPI(title="Churn Prediction & Analysis API", description="API for predicting and analyzing customer churn.")
 
 
-origins = [
-    "http://localhost:3000",
-]
+# Load allowed origins from env var (comma separated) or default to local dev URLs
+allowed_origins_env = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000')
+origins = [origin.strip() for origin in allowed_origins_env.split(',')]
 
 app.add_middleware(
     CORSMiddleware,

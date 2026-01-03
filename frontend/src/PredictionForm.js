@@ -49,8 +49,9 @@ const PredictionForm = () => {
         setPrediction(null);
 
         try {
-            const API_URL = "http://127.0.0.1:8000/predict";
-            const response = await axios.post(API_URL, formData);
+            // Priority: Environment Variable > Default Local
+            const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+            const response = await axios.post(`${API_URL}/predict`, formData);
             setPrediction(response.data);
         } catch (err) {
             setError('Failed to get prediction. Please ensure the backend server is running and accessible.');

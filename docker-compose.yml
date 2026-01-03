@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./Churn_API
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOWED_ORIGINS=http://localhost:3000
+      - CHURN_DATA_PATH=WA_Fn-UseC_-Telco-Customer-Churn.csv
+    volumes:
+      - ./Churn_API/WA_Fn-UseC_-Telco-Customer-Churn.csv:/app/WA_Fn-UseC_-Telco-Customer-Churn.csv
+      - ./Churn_API/churn_model.joblib:/app/churn_model.joblib
+      - ./Churn_API/scaler.joblib:/app/scaler.joblib
+      - ./Churn_API/model_columns.json:/app/model_columns.json
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
